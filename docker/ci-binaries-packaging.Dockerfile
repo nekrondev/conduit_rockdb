@@ -7,7 +7,7 @@
 # Credit's for the original Dockerfile: Weasy666.
 # ---------------------------------------------------------------------------------------------------------
 
-FROM docker.io/alpine:3.14 AS runner
+FROM docker.io/alpine:3.15.0 AS runner
 
 # Standard port on which Conduit launches.
 # You still need to map the port when using the docker command or docker-compose.
