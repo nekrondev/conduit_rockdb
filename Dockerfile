@@ -45,9 +45,9 @@ ENV CONDUIT_CONFIG="/srv/conduit/conduit.toml"
 #   ca-certificates: for https
 #   libgcc: Apparently this is needed, even if I (@jfowl) don't know exactly why. But whatever, it's not that big.
 RUN apk add --no-cache \
-        ca-certificates \
-        curl \
-        libgcc
+    ca-certificates \
+    curl \
+    libgcc
 
 
 # Created directory for the database and media files
