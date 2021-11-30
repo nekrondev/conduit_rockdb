@@ -1,8 +1,7 @@
 # syntax=docker/dockerfile:1
 # ---------------------------------------------------------------------------------------------------------
 # This Dockerfile is intended to be built as part of Conduit's CI pipeline.
-# It does not build Conduit in Docker, but just copies the matching build artifact from the build job.
-# As a consequence, this is not a multiarch capable image. It always expects and packages a x86_64 binary.
+# It does not build Conduit in Docker, but just copies the matching build artifact from the build jobs.
 #
 # It is mostly based on the normal Conduit Dockerfile, but adjusted in a few places to maximise caching.
 # Credit's for the original Dockerfile: Weasy666.
