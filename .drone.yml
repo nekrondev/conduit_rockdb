@@ -13,7 +13,7 @@ steps:
   - name: build-conduit-rocksdb
     image: rust:alpine
     commands:
-      - apk add libc-dev
+      - apk add libc-dev clang-dev
       - rustup target add x86_64-unknown-linux-musl
       - cd /usr/src/conduit
       - cargo build --release --target=x86_64-unknown-linux-musl
