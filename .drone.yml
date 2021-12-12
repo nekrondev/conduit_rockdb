@@ -13,6 +13,7 @@ steps:
   - name: build-conduit-rocksdb
     image: rust:alpine
     commands:
+      - env
       - apk add libc-dev clang-static clang-dev
       - rustup target add x86_64-unknown-linux-musl
       - cd /usr/src/conduit
@@ -21,7 +22,7 @@ steps:
     environment:
       CARGO_PROFILE_RELEASE_LTO: "true"
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
-      RUSTFLAGS: "-C target-feature=-crt-static"
+      RUSTFLAGS: "-C target-feature=+crt-static -C link-self-contained=yes"
   - name: upload-binary
     image: rclone/rclone
     environment:
