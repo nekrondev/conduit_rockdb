@@ -21,6 +21,7 @@ steps:
     environment:
       CARGO_PROFILE_RELEASE_LTO: "true"
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
+      RUSTFLAGS: "-C target-feature=-crt-static"
   - name: upload-binary
     image: rclone/rclone
     environment:
