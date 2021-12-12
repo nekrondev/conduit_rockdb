@@ -1,0 +1,61 @@
+---
+kind: pipeline
+type: docker
+name: conduit-rocksdb-release
+
+platform:
+  arch: amd64
+
+workspace:
+  base: /usr/src/conduit
+
+steps:
+  - name: build-conduit-rocksdb
+    image: rust:alpine
+    commands:
+      - apk add libc-dev
+      - rustup target add x86_64-unknown-linux-musl
+      - cd /usr/src/conduit
+      - cargo build --release --target=x86_64-unknown-linux-musl
+      - mv target/x86_64-unknown-linux-musl/release/conduit ./conduit
+    environment:
+      CARGO_PROFILE_RELEASE_LTO: "true"
+      CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
+  - name: upload-binary
+    image: rclone/rclone
+    environment:
+      RCLONE_S3_PROVIDER: Minio
+      RCLONE_S3_ACCESS_KEY_ID:
+        from_secret: s3_access_key
+      RCLONE_S3_SECRET_ACCESS_KEY:
+        from_secret: s3_secret_key
+      RCLONE_S3_ENDPOINT:
+        from_secret: s3_endpoint
+    commands:
+      - rclone copy ./conduit :s3:cache/bin
+  - name: build-docker-image
+    image: gcr.io/kaniko-project/executor
+    entrypoint: ["/kaniko/executor"]
+    command:
+      [
+        "--dockerfile=./Dockerfile",
+        "--destination=nekrondev/conduit:poc",
+        "--context=./",
+        "--tarPath=./conduit_image.tar",
+        "--force",
+        "--no-push",
+      ]
+  - name: upload-docker-image
+    image: rclone/rclone
+    environment:
+      RCLONE_S3_PROVIDER: Minio
+      RCLONE_S3_ACCESS_KEY_ID:
+        from_secret: s3_access_key
+      RCLONE_S3_SECRET_ACCESS_KEY:
+        from_secret: s3_secret_key
+      RCLONE_S3_ENDPOINT:
+        from_secret: s3_endpoint
+    commands:
+      - rclone copy ./conduit_image.tar :s3:cache/images
+
+
