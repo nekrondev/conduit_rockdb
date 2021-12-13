@@ -22,7 +22,8 @@ steps:
     environment:
       CARGO_PROFILE_RELEASE_LTO: "true"
       CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
-      RUSTFLAGS: "-C target-feature=+crt-static -C link-self-contained=yes"
+      RUSTFLAGS: "-Ctarget-feature=+crt-static -Clink-self-contained=yes"
+      ROCKSDB_STATIC: 1
   - name: upload-binary
     image: rclone/rclone
     environment:
