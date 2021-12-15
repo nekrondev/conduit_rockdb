@@ -11,19 +11,13 @@ workspace:
 
 steps:
   - name: build-conduit-rocksdb
-    image: rust:alpine
+    image: rust:1.57
     commands:
-      - env
-      - apk add libc-dev clang-static clang-dev
-      - rustup target add x86_64-unknown-linux-musl
+      - apt update
+      - apt install clang
       - cd /usr/src/conduit
-      - cargo build --release --target=x86_64-unknown-linux-musl
-      - mv target/x86_64-unknown-linux-musl/release/conduit ./conduit
-    environment:
-      CARGO_PROFILE_RELEASE_LTO: "true"
-      CARGO_PROFILE_RELEASE_CODEGEN_UNITS: 1
-      RUSTFLAGS: "-Ctarget-feature=+crt-static -Clink-self-contained=yes"
-      ROCKSDB_STATIC: 1
+      - cargo build --release
+      - mv target/release/conduit ./conduit
   - name: upload-binary
     image: rclone/rclone
     environment:
