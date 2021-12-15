@@ -44,18 +44,15 @@ COPY ./docker/healthcheck.sh /srv/conduit/
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install
 RUN set -x ; \
     chmod +x /srv/conduit/healthcheck.sh ; \
-    addgroup -Sg 82 www-data 2>/dev/null ; \
-    adduser -S -D -H -h /srv/conduit -G www-data -g www-data www-data 2>/dev/null ; \
-    addgroup www-data www-data 2>/dev/null && exit 0 ; exit 1
+    adduser --system --shell /bin/sh --group --disabled-password --home /srv/conduit www-data 2>/dev/null ;
 
 # Change ownership of Conduit files to www-data user and group
 RUN chown -cR www-data:www-data /srv/conduit
 
 # Install packages needed to run Conduit
-RUN apk add --no-cache \
+RUN apt -y install \
         ca-certificates \
-        curl \
-        libgcc
+        curl
 
 # Test if Conduit is still alive, uses the same endpoint as Element
 HEALTHCHECK --start-period=5s --interval=60s CMD ./healthcheck.sh
