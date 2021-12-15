@@ -14,7 +14,7 @@ steps:
     image: rust:1.57
     commands:
       - apt update
-      - apt install clang
+      - apt -y install clang
       - cd /usr/src/conduit
       - cargo build --release
       - mv target/release/conduit ./conduit
