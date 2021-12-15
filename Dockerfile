@@ -45,7 +45,8 @@ COPY ./docker/healthcheck.sh /srv/conduit/
 RUN set -x ; \
     chmod +x /srv/conduit/healthcheck.sh ; \
 	deluser www-data 2>/dev/null ; \
-    adduser --system --shell /bin/sh --group --disabled-password --home /srv/conduit --no-create-home www-data 2>/dev/null ;
+    adduser --system --shell /bin/sh --group --disabled-password --home /srv/conduit --no-create-home www-data 2>/dev/null ; \
+	apt update ;
 
 # Change ownership of Conduit files to www-data user and group
 RUN chown -cR www-data:www-data /srv/conduit
