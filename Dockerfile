@@ -52,7 +52,6 @@ RUN chown -cR www-data:www-data /srv/conduit
 
 # Install packages needed to run Conduit
 RUN apt -y install \
-        ca-certificates \
         curl
 
 # Test if Conduit is still alive, uses the same endpoint as Element
