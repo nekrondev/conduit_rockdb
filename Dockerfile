@@ -44,6 +44,7 @@ COPY ./docker/healthcheck.sh /srv/conduit/
 # https://git.alpinelinux.org/aports/tree/main/nginx/nginx.pre-install
 RUN set -x ; \
     chmod +x /srv/conduit/healthcheck.sh ; \
+	deluser www-data 2>/dev/null ; \
     adduser --system --shell /bin/sh --group --disabled-password --home /srv/conduit --no-create-home www-data 2>/dev/null ;
 
 # Change ownership of Conduit files to www-data user and group
