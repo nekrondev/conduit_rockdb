@@ -53,7 +53,7 @@ RUN chown -cR www-data:www-data /srv/conduit
 
 # Install packages needed to run Conduit
 RUN apt -y install \
-        curl
+        wget
 
 # Test if Conduit is still alive, uses the same endpoint as Element
 HEALTHCHECK --start-period=5s --interval=60s CMD ./healthcheck.sh
