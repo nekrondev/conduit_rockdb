@@ -19,7 +19,7 @@ steps:
       - cd /usr/src/conduit
       - git checkout rocksdb
       - cargo build --release
-      - mv target/release/conduit ./conduit
+      - mv target/release/conduit /usr/src/conduit_github/conduit
   - name: upload-binary
     image: rclone/rclone
     environment:
@@ -31,16 +31,15 @@ steps:
       RCLONE_S3_ENDPOINT:
         from_secret: s3_endpoint
     commands:
-      - cd /usr/src/conduit
       - rclone copy ./conduit :s3:cache/bin
   - name: build-docker-image
     image: gcr.io/kaniko-project/executor
     entrypoint: ["/kaniko/executor"]
     command:
       [
-        "--dockerfile=/usr/src/conduit/Dockerfile",
+        "--dockerfile=./Dockerfile",
         "--destination=nekrondev/conduit:poc",
-        "--context=/usr/src/conduit/",
+        "--context=./",
         "--tarPath=./conduit_image.tar",
         "--force",
         "--no-push",
