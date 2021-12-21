@@ -7,15 +7,17 @@ platform:
   arch: amd64
 
 workspace:
-  base: /usr/src/conduit
+  base: /usr/src/conduit_github
 
 steps:
   - name: build-conduit-rocksdb
     image: rust:1.57
     commands:
       - apt update
-      - apt -y install clang
+      - apt -y install clang git
+      - git clone https://gitlab.com/famedly/conduit.git /usr/src/conduit
       - cd /usr/src/conduit
+      - git checkout rocksdb
       - cargo build --release
       - mv target/release/conduit ./conduit
   - name: upload-binary
