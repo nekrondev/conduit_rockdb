@@ -31,15 +31,16 @@ steps:
       RCLONE_S3_ENDPOINT:
         from_secret: s3_endpoint
     commands:
+      - cd /usr/src/conduit
       - rclone copy ./conduit :s3:cache/bin
   - name: build-docker-image
     image: gcr.io/kaniko-project/executor
     entrypoint: ["/kaniko/executor"]
     command:
       [
-        "--dockerfile=./Dockerfile",
+        "--dockerfile=/usr/src/conduit/Dockerfile",
         "--destination=nekrondev/conduit:poc",
-        "--context=./",
+        "--context=/usr/src/conduit/",
         "--tarPath=./conduit_image.tar",
         "--force",
         "--no-push",
