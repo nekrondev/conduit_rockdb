@@ -98,7 +98,7 @@ steps:
         "--dockerfile=./Dockerfile",
         "--destination=nekrondev/conduit:poc",
         "--context=./",
-        "--tarPath=./conduit_image.tar",
+        "--tarPath=./conduit_image_arm64.tar",
         "--force",
         "--no-push",
       ]
@@ -113,14 +113,14 @@ steps:
       RCLONE_S3_ENDPOINT:
         from_secret: s3_endpoint
     commands:
-      - rclone copy ./conduit_image.tar :s3:cache/images
+      - rclone copy ./conduit_image_arm64.tar :s3:cache/images
 
   - name: publish-github-release-arm64
     image: plugins/github-release
     settings:
       api_key:
         from_secret: release
-      files: ./conduit_image.tar
+      files: ./conduit_image_arm64.tar
       title: Conduit RocksDB Docker Image ARM64
       prerelease: true
       when:
