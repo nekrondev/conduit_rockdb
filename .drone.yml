@@ -67,4 +67,61 @@ steps:
       prerelease: true
       when:
         event: tag
+---
+kind: pipeline
+type: docker
+name: conduit-rocksdb-release-arm64
 
+platform:
+  arch: arm64
+
+workspace:
+  base: /usr/src/conduit_github
+
+steps:
+  - name: build-conduit-rocksdb-arm64
+    image: rust:1.57
+    commands:
+      - apt update
+      - apt -y install clang git
+      - git clone https://gitlab.com/famedly/conduit.git /usr/src/conduit
+      - cd /usr/src/conduit
+      - git checkout rocksdb
+      - cargo build --release
+      - mv target/release/conduit /usr/src/conduit_github/conduit
+
+  - name: build-docker-image-arm64
+    image: gcr.io/kaniko-project/executor
+    entrypoint: ["/kaniko/executor"]
+    command:
+      [
+        "--dockerfile=./Dockerfile",
+        "--destination=nekrondev/conduit:poc",
+        "--context=./",
+        "--tarPath=./conduit_image.tar",
+        "--force",
+        "--no-push",
+      ]
+  - name: upload-docker-image-arm64
+    image: rclone/rclone
+    environment:
+      RCLONE_S3_PROVIDER: Minio
+      RCLONE_S3_ACCESS_KEY_ID:
+        from_secret: s3_access_key
+      RCLONE_S3_SECRET_ACCESS_KEY:
+        from_secret: s3_secret_key
+      RCLONE_S3_ENDPOINT:
+        from_secret: s3_endpoint
+    commands:
+      - rclone copy ./conduit_image.tar :s3:cache/images
+
+  - name: publish-github-release-arm64
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: release
+      files: ./conduit_image.tar
+      title: Conduit RocksDB Docker Image ARM64
+      prerelease: true
+      when:
+        event: tag
