@@ -57,4 +57,14 @@ steps:
     commands:
       - rclone copy ./conduit_image.tar :s3:cache/images
 
+  - name: publish-github-release
+    image: plugins/github-release
+    settings:
+      api_key:
+        from_secret: release
+      files: ./conduit_image.tar
+      title: Conduit RocksDB Docker Image
+      prerelease: true
+      when:
+        event: tag
 
